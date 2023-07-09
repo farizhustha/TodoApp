@@ -23,20 +23,23 @@ class DetailTaskActivity : AppCompatActivity() {
         val id = intent.getIntExtra(TASK_ID, 0)
 
         val factory = ViewModelFactory.getInstance(this)
-        viewModel = ViewModelProvider(this, factory)
-            .get(DetailTaskViewModel::class.java)
+        viewModel = ViewModelProvider(
+            this, factory
+        )[DetailTaskViewModel::class.java]
 
         viewModel.setTaskId(id)
 
         viewModel.task.observe(this) { task ->
-            findViewById<TextInputEditText>(R.id.detail_ed_title).setText(task.title)
-            findViewById<TextInputEditText>(R.id.detail_ed_description).setText(task.description)
-            findViewById<TextInputEditText>(R.id.detail_ed_due_date)
-                .setText(DateConverter.convertMillisToString(task.dueDateMillis))
-            findViewById<Button>(R.id.btn_delete_task).setOnClickListener {
-                viewModel.deleteTask()
-                Toast.makeText(this, R.string.delete_task_success, Toast.LENGTH_SHORT).show()
-                finish()
+            if (task != null) {
+                findViewById<TextInputEditText>(R.id.detail_ed_title).setText(task.title)
+                findViewById<TextInputEditText>(R.id.detail_ed_description).setText(task.description)
+                findViewById<TextInputEditText>(R.id.detail_ed_due_date)
+                    .setText(DateConverter.convertMillisToString(task.dueDateMillis))
+                findViewById<Button>(R.id.btn_delete_task).setOnClickListener {
+                    viewModel.deleteTask()
+                    Toast.makeText(this, R.string.delete_task_success, Toast.LENGTH_SHORT).show()
+                    finish()
+                }
             }
         }
     }
