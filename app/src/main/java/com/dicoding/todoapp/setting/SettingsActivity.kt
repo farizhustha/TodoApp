@@ -8,7 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import androidx.work.Data
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import com.dicoding.todoapp.R
+import com.dicoding.todoapp.notification.NotificationWorker
+import com.dicoding.todoapp.utils.NOTIFICATION_CHANNEL_ID
+import java.util.concurrent.TimeUnit
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -42,16 +48,45 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
+
+        private lateinit var workManager: WorkManager
+        private lateinit var periodicWorkRequest: PeriodicWorkRequest
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-            val prefNotification = findPreference<SwitchPreference>(getString(R.string.pref_key_notify))
+            workManager = WorkManager.getInstance(requireActivity())
+
+            val prefNotification =
+                findPreference<SwitchPreference>(getString(R.string.pref_key_notify))
             prefNotification?.setOnPreferenceChangeListener { preference, newValue ->
                 val channelName = getString(R.string.notify_channel_name)
                 //TODO 13 : Schedule and cancel daily reminder using WorkManager with data channelName
+
+                val data = Data.Builder()
+                    .putString(NOTIFICATION_CHANNEL_ID, channelName)
+                    .build()
+                periodicWorkRequest =
+                    PeriodicWorkRequest.Builder(NotificationWorker::class.java, 1, TimeUnit.DAYS)
+                        .setInputData(data)
+                        .build()
+
+                if (newValue as Boolean) {
+                    startPeriodicTask(channelName)
+                } else {
+                    cancelPeriodicTask()
+                }
                 true
             }
 
         }
+
+        private fun startPeriodicTask(channelName: String) {
+            workManager.enqueue(periodicWorkRequest)
+        }
+
+        private fun cancelPeriodicTask() {
+            workManager.cancelWorkById(periodicWorkRequest.id)
+        }
+
     }
 }
