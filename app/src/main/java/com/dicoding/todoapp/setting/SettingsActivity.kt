@@ -1,11 +1,11 @@
 package com.dicoding.todoapp.setting
 
 import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import androidx.work.Data
@@ -44,7 +44,10 @@ class SettingsActivity : AppCompatActivity() {
         }
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
@@ -58,7 +61,7 @@ class SettingsActivity : AppCompatActivity() {
 
             val prefNotification =
                 findPreference<SwitchPreference>(getString(R.string.pref_key_notify))
-            prefNotification?.setOnPreferenceChangeListener { preference, newValue ->
+            prefNotification?.setOnPreferenceChangeListener { _, newValue ->
                 val channelName = getString(R.string.notify_channel_name)
                 //TODO 13 : Schedule and cancel daily reminder using WorkManager with data channelName
 
@@ -71,7 +74,7 @@ class SettingsActivity : AppCompatActivity() {
                         .build()
 
                 if (newValue as Boolean) {
-                    startPeriodicTask(channelName)
+                    startPeriodicTask()
                 } else {
                     cancelPeriodicTask()
                 }
@@ -80,7 +83,7 @@ class SettingsActivity : AppCompatActivity() {
 
         }
 
-        private fun startPeriodicTask(channelName: String) {
+        private fun startPeriodicTask() {
             workManager.enqueue(periodicWorkRequest)
         }
 

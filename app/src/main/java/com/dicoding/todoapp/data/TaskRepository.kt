@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import androidx.paging.toLiveData
 import com.dicoding.todoapp.utils.FilterUtils
 import com.dicoding.todoapp.utils.TasksFilterType
 

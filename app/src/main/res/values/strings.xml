@@ -14,8 +14,8 @@
     <string name="empty_task_message">Tasks cannot be empty</string>
     <string name="task_marked_complete">Task marked complete</string>
     <string name="task_marked_active">Task marked active</string>
-    <string name="add_task_success">Task Added Successfully!</string>
-    <string name="delete_task_success">Task Deleted Successfully!</string>
+    <string name="add_task_success">Task added successfully</string>
+    <string name="delete_task_success">Task deleted successfully</string>
 
     <!-- Preference Titles -->
     <string name="reminder_header">Reminder</string>
