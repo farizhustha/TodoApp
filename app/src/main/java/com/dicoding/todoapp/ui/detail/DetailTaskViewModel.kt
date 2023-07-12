@@ -5,7 +5,7 @@ import com.dicoding.todoapp.data.Task
 import com.dicoding.todoapp.data.TaskRepository
 import kotlinx.coroutines.launch
 
-class DetailTaskViewModel(private val taskRepository: TaskRepository): ViewModel() {
+class DetailTaskViewModel(private val taskRepository: TaskRepository) : ViewModel() {
 
     private val _taskId = MutableLiveData<Int>()
 
